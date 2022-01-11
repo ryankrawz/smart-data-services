@@ -1,15 +1,15 @@
 apiVersion: v1
 entries:
-  new_service:
+  newservice:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2022-01-11T11:55:01.794679-05:00"
+    created: "2022-01-11T14:11:42.203218-05:00"
     description: A Helm chart for Kubernetes
-    digest: 6017e3686368e035f29d8b7d8a37c829b959400051e0db48ca936178da6e8799
-    name: new_service
+    digest: 5a9cbd9dfcc58d8582b52325e944e6720e0f5a5f68edaee2a20b6fc179112cb7
+    name: newservice
     type: application
     urls:
-    - https://ryankrawz.github.io/smart-data-services/new_service-0.1.0.tgz
+    - https://ryankrawz.github.io/smart-data-services/newservice-0.1.0.tgz
     version: 0.1.0
   sds_iris_template:
   - annotations:
@@ -18,7 +18,7 @@ entries:
       intersystems/sds-title: InterSystems IRIS Service Template
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2022-01-11T11:55:01.795356-05:00"
+    created: "2022-01-11T14:11:42.204409-05:00"
     description: Put a description of your service here
     digest: 9dcff19f0b82487bf4131df5fdae4a1c924605c69e19e8fd475f2ca194bd69f4
     icon: https://amirsamary.github.io/sds-charts-dev/per_iris/icon.png
@@ -27,4 +27,4 @@ entries:
     urls:
     - https://ryankrawz.github.io/smart-data-services/sds_iris_template-1.0.0.tgz
     version: 1.0.0
-generated: "2022-01-11T11:55:01.793851-05:00"
+generated: "2022-01-11T14:11:42.202536-05:00"
