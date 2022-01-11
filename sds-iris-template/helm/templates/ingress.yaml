@@ -1,0 +1,36 @@
+{{- if eq (toString .Values.ingress.enabled) "true" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: {{ .Release.Name }}
+  name: ingress
+  annotations:
+    {{- if eq .Values.cloudProvider "DEV" }}
+    kubernetes.io/ingress.class: "traefik"
+    {{- end }}
+    #traefik.frontend.rule.type: PathPrefixStrip
+    {{- if eq .Values.cloudProvider "AWS" }}
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    # alb.ingress.kubernetes.io/group.name: sds
+    {{- end }}
+
+    # traefik.frontend.rule.type: PathPrefixStrip
+spec:
+  rules:
+  {{- if ne .Values.ingress.hostname "0" }}
+  - host: {{ .Values.ingress.hostname }}
+    http:
+  {{- else }}
+  - http:
+  {{- end }}
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}
+            port:
+              number: 52773
+{{- end }}

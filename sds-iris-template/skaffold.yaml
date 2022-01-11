@@ -1,0 +1,67 @@
+apiVersion: skaffold/v2beta10
+kind: Config
+
+# Standard build used by both "dev" and "run" profiles below
+build:
+  insecureRegistries: 
+    - local-registry
+
+  local:
+    tryImportMissing: false
+    push: true
+    useBuildkit: true
+    concurrency: 2
+  tagPolicy:
+    sha256: {}
+
+  artifacts:
+    - image: sds_iris_template
+      context: .
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        # We must use a manual sync into the /tmp/src folder just to prevent skaffold from
+        # rebuilding the entire image and reapplying the entire helm chart because of that.
+        # IRIS is not really looking into this folder inside the image. VSCode is the tool we
+        # use to change files during development and, thanks to our plugin, VSCode does the 
+        # synchronization for us. The files in /tmp/src are completely ignored.
+        manual: 
+        - src: 'src/**'
+          dest: /tmp/src
+
+
+
+# Definitions of the "dev" and "run" profiles
+profiles:
+
+  # DEV Profile
+  # Used when developping. 
+  # We will just be using the standard build above without changes
+  - name: dev
+    activation:
+      - command: dev
+    portForward:
+      - resourceType: service
+        resourceName: sds-iris-service
+        namespace: sds-iris-service
+        port: 52773
+        localPort: 52774
+    deploy:
+      kubectl:
+        manifests:
+          - ./k8s/cp_backend_iris_key_secret.yaml
+      helm:
+        releases:
+          - name: sds-iris-service
+            chartPath: helm
+            namespace: sds-iris-service
+            artifactOverrides:
+              skaffoldImage: sds_iris_template
+            setValues:
+              skaffold: true
+              cloudProvider: "dev" 
+              cloudProviderRegion: "dev-region"
+              storageDB.storageClass: "local-path"
+              storageWIJ.storageClass: "local-path"
+              storageJournal1.storageClass: "local-path"
+              storageJournal2.storageClass: "local-path"

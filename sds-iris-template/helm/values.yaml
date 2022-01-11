@@ -1,0 +1,50 @@
+# Used to specify where the deployment is being done
+cloudProvider: "dev"
+cloudProviderRegion: "dev"
+skaffold: false
+
+compute:
+  database:
+    nodeTypeSelector: ""
+    cpu: 2
+    memory: 2Gi
+
+storageDB: 
+  size : 50Gi
+  storageClass : ssd-storageclass-1
+storageWIJ: 
+  size: 25Gi
+  storageClass : ssd-storageclass-1
+storageJournal1: 
+  size: 50Gi
+  storageClass : ssd-storageclass-1
+storageJournal2: 
+  size: 3Gi
+  storageClass : ssd-storageclass-1
+
+mirrored: false
+image:
+  registry: containers.intersystems.com/iscinternal/sds
+  repository: sds_iris_template
+
+# This will be injected by the control plane:
+imagePullSecrets:
+ - name: intersystems-container-registry-secret
+
+ingress:
+  enabled: true
+  hostname: ""
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+superServer:
+  enabled: true
+  hostname: "localhost"
+  port: "10000"
+
+management:
+  enabled: true
+  hostname: "localhost"
+  port: "10001"

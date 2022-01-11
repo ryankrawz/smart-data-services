@@ -1,0 +1,70 @@
+apiVersion: intersystems.com/v1alpha1
+kind: IrisCluster
+metadata:
+  name: {{.Release.Name}}
+  namespace: {{.Release.Namespace}}
+spec:
+  licenseKeySecret:
+    name: iris-key-secret
+  configSource:
+    name: iris-cpf-config-map
+  topology:
+    data:
+      podTemplate:
+        spec:
+        {{- if .Values.imagePullSecrets }}
+          imagePullSecrets:      
+{{ toYaml .Values.imagePullSecrets | indent 10 }}
+        {{- end }}
+          env:
+          - name: CLOUD_PROVIDER
+            value: {{ .Values.cloudProvider }}
+          - name: CLOUD_PROVIDER_REGION
+            value: {{ .Values.cloudProviderRegion }}
+          - name: SERVICE_INTERNAL_NAME
+            value: {{ .Values.serviceInternalName }}
+          {{- if .Values.compute.database.nodeTypeSelector }}
+          nodeSelector:
+            sds/node-type: {{ .Values.compute.database.nodeTypeSelector }}
+          {{- end }}
+          resources:
+            requests:
+              cpu: {{ .Values.compute.database.cpu }}
+              memory: {{ .Values.compute.database.memory }}
+          tolerations:
+          - key: sds/select-worker
+            value: select-worker
+            effect: NoSchedule
+
+      mirrored: {{.Values.mirrored}}
+      {{- if eq .Values.skaffold true }}
+      image: {{ .Values.skaffoldImage }}
+      {{- else }}
+      image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Chart.AppVersion }}
+      {{- end }}
+
+      updateStrategy:
+        type: RollingUpdate
+      storageDB:
+        resources:
+          requests:
+            storage: {{.Values.storageDB.size}}
+        storageClassName: {{.Values.storageDB.storageClass}}
+      storageWIJ:
+        resources:
+          requests:
+            storage: {{.Values.storageWIJ.size}}
+        storageClassName: {{.Values.storageWIJ.storageClass}}
+      storageJournal1:
+        resources:
+          requests:
+            storage: {{.Values.storageJournal1.size}}
+        storageClassName: {{.Values.storageJournal1.storageClass}}
+      storageJournal2:
+        resources:
+          requests:
+            storage: {{.Values.storageJournal2.size}}
+        storageClassName: {{.Values.storageJournal2.storageClass}}
+  serviceTemplate:
+      spec:
+        type: ClusterIP

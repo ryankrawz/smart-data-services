@@ -1,0 +1,16 @@
+{{- if eq (toString .Values.superServer.enabled) "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: super-server
+  namespace: {{ .Release.Name }}
+spec:
+  selector:
+    intersystems.com/component: data
+    intersystems.com/kind: IrisCluster
+    intersystems.com/role: iris
+  ports:
+    - port: {{ .Values.superServer.port }}
+      targetPort: 1972
+  type: LoadBalancer
+{{- end }}

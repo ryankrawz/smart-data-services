@@ -1,0 +1,278 @@
+apiVersion: v1
+sections:
+- label: High Availability
+  fields:
+  - field: mirrored
+    type: boolean
+    label: Mirroring Support
+    help: If you enable mirroring, then it's mirrored
+    value: "false"
+secrets:
+- name: iris-key-secret
+  reason: The IRIS License to be used with this deployment
+- name: intersystems-container-registry-secret
+  reason: These are the credentials to authenticate with containers.intersystems.com
+EULSA: https://www.intersystems.com/EULSA-Docs/InterSystems_IRIS_Cloud_End_User-8_14_19.pdf 
+endpoints:
+- title: Web Terminal
+  group: Developer
+  description: Open an instance of terminal in your browser
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/terminal/
+  contexts:
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: SQL
+  group: Developer
+  description: Open the SQL tab in the management portal
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/exp/%25CSP.UI.Portal.SQL.Home.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Databases
+  group: Operations
+  description: Open the databases mananger
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/op/%25CSP.UI.Portal.OpDatabases.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Processes
+  group: Operations
+  description: Open the processes mananger
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/op/%25CSP.UI.Portal.Processes.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Locks
+  group: Operations
+  description: Open the locks manager
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/op/%25CSP.UI.Portal.Locks.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Task Schedule
+  group: Operations
+  description: View scheduled tasks in the management portal
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/op/%25CSP.UI.Portal.TaskSchedule.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Messages Log
+  group: Operations
+  description: View the messages log in the management portal
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/op/UtilSysConsoleLog.csp
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Users
+  group: Security
+  description: View, edit, and manage users
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/sec/%25CSP.UI.Portal.Users.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Roles
+  group: Security
+  description: View, edit, and manage roles
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/sec/%25CSP.UI.Portal.Roles.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Resources
+  group: Security
+  description: View, edit, and manage resources
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/sec/%25CSP.UI.Portal.Resources.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Services
+  group: Security
+  description: View, edit, and manage services
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/sec/%25CSP.UI.Portal.Services.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Web Applications
+  group: Security
+  description: View, edit, and manage web applications
+  type: browsing
+  url: http://{externalService.host}:{externalService.port}/csp/sys/sec/%25CSP.UI.Portal.Applications.WebList.zen
+  contexts: 
+  - manage
+  visibility: external
+  presentation: link
+  externalService: management
+- title: Getting Started!
+  group: Documentation
+  description: Learn more about...
+  type: browsing
+  url: https://gettingstarted.intersystems.com
+  contexts: 
+  - catalog
+  - documentation
+  visibility: foreign
+  presentation: link
+- title: Internal JDBC Endpoint
+  contexts:
+  - manage
+  icon: bpleditor.png
+  group: Connectivity
+  description: Connect using JDBC
+  visibility: internal
+  presentation: apiEndpoint
+  type: intersystems-iris-jdbc
+  clusterIPService: iris-svc
+  url: jdbc:IRIS://{clusterIPService.host}:1972/USER
+- title: External JDBC Endpoint
+  contexts:
+  - manage
+  icon: bpleditor.png
+  group: Connectivity
+  description: Connect using JDBC from outside the cluster
+  visibility: external
+  externalService: super-server
+  presentation: apiEndpoint
+  type: intersystems-iris-jdbc
+  url: jdbc:IRIS://{externalService.host}:{externalService.port}/USER
+compute:
+  computeSpecs:
+  - name: database
+    label: Database Node Specification
+    categoryFilter: CO,MO,GP
+    minCPU: 2
+    minRAM: 4
+    nodeSelectorField: compute.database.nodeTypeSelector
+    cpuRequestField: compute.database.cpu
+    memoryRequestField: compute.database.memory
+    help: Specifies how many cores and how much memory your database server nodes will have 
+storage:
+  storageSpecs:
+  - name: database
+    label: Database
+    sizeField: storageDB.size
+    storageClassField: storageDB.storageClass
+    help: This is the storage reserved for your database...
+  - name: wij
+    label: Write Image Journal
+    sizeField: storageWIJ.size
+    storageClassField: storageWIJ.storageClass
+    help: This is the storage reserved for your database...
+  - name: journal1
+    label: Primary Journal
+    sizeField: storageJournal1.size
+    storageClassField: storageJournal1.storageClass
+    help: This is the storage reserved for your primary journal data...
+  - name: journal2
+    label: Secondary Journal
+    sizeField: storageJournal2.size
+    storageClassField: storageJournal2.storageClass
+    help: This is the storage reserved for your secondary journal data...
+  allowCustom: true
+  storageOptions:
+  - name: Small
+    help: Ideal for small workloads...
+    storageOptionSpecs:
+    - storageSpecName: database
+      size: 100
+      IOPS: 1000
+    - storageSpecName: wij
+      size: 10
+      IOPS: 500
+    - storageSpecName: journal1
+      size: 30
+      IOPS: 1500
+    - storageSpecName: journal2
+      size: 30
+      IOPS: 900
+  - name: Medium 
+    help: Ideal for medium workloads...
+    storageOptionSpecs:
+    - storageSpecName: database
+      size: 300
+      IOPS: 3000
+    - storageSpecName: wij
+      size: 50
+      IOPS: 2000
+    - storageSpecName: journal1
+      size: 600
+      IOPS: 3000
+    - storageSpecName: journal2
+      size: 300
+      IOPS: 1500
+  - name: Large
+    help: Ideal for large workloads...
+    storageOptionSpecs:
+    - storageSpecName: database
+      size: 1000
+      IOPS: 10000
+    - storageSpecName: wij
+      size: 200
+      IOPS: 10000
+    - storageSpecName: journal1
+      size: 1250
+      IOPS: 12500
+    - storageSpecName: journal2
+      size: 500
+      IOPS: 3500
+externalServicesDeclarations:
+ - name: super-server
+   type: loadBalancer
+   hostnameChartField: superServer.hostname
+   loadBalancerPortChartField: superServer.port
+   enabled: false
+   enabledChartField: superServer.enabled
+   label: Super Server Port
+   description: Port through which JDBC/ODBC connections are made
+ - name: management
+   type: loadBalancer
+   hostnameChartField: management.hostname
+   loadBalancerPortChartField: management.port
+   enabled: false
+   enabledChartField: management.enabled
+   label: Management Portal over Load Balancer
+   description: Port to access the management portal over a Load Balancer
+ - name: ingress
+   type: ingress
+   hostnameChartField: ingress.hostname
+   ingressBasePath: /
+   enabled: false
+   enabledChartField: ingress.enabled
+   label: Management Portal over Ingress
+   description: Reach the management portal over an Ingress
+workflowRoles:
+ - name: Data Steward
+   reason: For resolving issues with lookups when transforming the data
+ - name: Business Analyst
+   reason: To be notified about margin breaches

@@ -1,0 +1,6 @@
+ROUTINE ZSTU
+    
+    do ##class(%SYS.System).WriteToConsoleLog("Running ZSTU.")
+
+    Quit
+

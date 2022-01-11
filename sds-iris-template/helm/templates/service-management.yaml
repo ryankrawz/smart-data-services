@@ -1,0 +1,17 @@
+{{- if eq (toString .Values.management.enabled) "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: management
+  namespace: {{ .Release.Name }}
+spec:
+  selector:
+    intersystems.com/component: data
+    intersystems.com/kind: IrisCluster
+    intersystems.com/role: iris
+  ports:
+    - port: {{ .Values.management.port }}
+      targetPort: 52773
+  type: LoadBalancer
+
+{{- end }}
